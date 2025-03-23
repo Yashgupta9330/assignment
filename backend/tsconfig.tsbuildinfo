@@ -1,0 +1,1 @@
+{"root":["./src/db.ts","./src/server.ts","./src/controller/doctorcontroller.ts","./src/routes/doctorroute.ts","./src/zod/slot.ts"],"version":"5.8.2"}
