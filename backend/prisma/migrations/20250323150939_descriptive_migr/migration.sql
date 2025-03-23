@@ -15,5 +15,8 @@ CREATE TABLE "Slot" (
     CONSTRAINT "Slot_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateIndex
+CREATE UNIQUE INDEX "Doctor_name_key" ON "Doctor"("name");
+
 -- AddForeignKey
 ALTER TABLE "Slot" ADD CONSTRAINT "Slot_doctorId_fkey" FOREIGN KEY ("doctorId") REFERENCES "Doctor"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

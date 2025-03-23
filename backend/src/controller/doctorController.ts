@@ -1,23 +1,23 @@
 import { Request, Response } from 'express';
-import prisma from '../db'; 
+import prisma from '../db';
 import { addSlotSchema } from '../zod/slot';
 
 export const addSlot = async (req: Request, res: Response) => {
   try {
-    const validatedData = addSlotSchema.parse(req.body); 
-    
+    const validatedData = addSlotSchema.parse(req.body);
+
     let doctor = await prisma.doctor.findUnique({
       where: { name: validatedData.doctorName },
     });
-    
+
     if (!doctor) {
       doctor = await prisma.doctor.create({
         data: { name: validatedData.doctorName },
       });
     }
-    
-    const slotData = validatedData.slots.map((slotDate: string) => ({
-      date: new Date(slotDate),
+
+    const slotData = validatedData.slots.map((slot: { date: string; time: string }) => ({
+      date: new Date(`${slot.date}T${slot.time}:00`),  
       doctorId: doctor.id,
     }));
 
@@ -46,7 +46,8 @@ export const getSlot = async (req: Request, res: Response) => {
       doctorName: doctor.name,
       slots: doctor.slots.map((slot) => ({
         id: slot.id,
-        date: slot.date.toISOString().split('T')[0], 
+        date: slot.date.toISOString().split('T')[0],   // Extract date
+        time: slot.date.toISOString().split('T')[1].slice(0, 5), // Extract time (HH:MM)
       })),
     }));
 

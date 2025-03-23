@@ -11,7 +11,10 @@ const isFutureOrToday = (dateString) => {
 };
 exports.addSlotSchema = zod_1.z.object({
     doctorName: zod_1.z.string().min(1, { message: "Doctor name is required" }),
-    slots: zod_1.z.array(zod_1.z.string()
-        .regex(/^\d{4}-\d{2}-\d{2}$/, { message: "Invalid date format, expected YYYY-MM-DD" })
-        .refine(isFutureOrToday, { message: "Slot date must be today or in the future" }))
+    slots: zod_1.z.array(zod_1.z.object({
+        date: zod_1.z.string()
+            .regex(/^\d{4}-\d{2}-\d{2}$/, { message: "Invalid date format, expected YYYY-MM-DD" })
+            .refine(isFutureOrToday, { message: "Slot date must be today or in the future" }),
+        time: zod_1.z.string().regex(/^\d{2}:\d{2}$/, { message: "Invalid time format, expected HH:MM" })
+    }))
 });

@@ -2,17 +2,21 @@ import { useState } from 'react';
 
 function DoctorForm() {
   const [doctorName, setDoctorName] = useState('');
-  const [slot, setSlot] = useState('');
-  const [slots, setSlots] = useState<string[]>([]); 
+  const [slotDate, setSlotDate] = useState('');
+  const [slotTime, setSlotTime] = useState('');
+  const [slots, setSlots] = useState<{ date: string; time: string }[]>([]);
 
   // Add slot to the list
   const handleAddSlot = () => {
-    if (slot) {
-      setSlots([...slots, slot]); 
-      setSlot(''); 
+    if (slotDate && slotTime) {
+      setSlots([...slots, { date: slotDate, time: slotTime }]);
+      setSlotDate(''); // Clear input after adding slot
+      setSlotTime(''); // Clear input after adding slot
+    } else {
+      alert('Please provide both date and time.');
     }
   };
-  
+
   // Add doctor and slots to the server
   const addDoctor = async (doctorData: any) => {
     try {
@@ -23,24 +27,24 @@ function DoctorForm() {
         },
         body: JSON.stringify(doctorData),
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to add doctor');
       }
-  
+
       const data = await response.json();
       console.log('Doctor added successfully:', data);
     } catch (error) {
       console.error('Error adding doctor:', error);
     }
   };
-  
+
   // Submit doctor and slots
   const handleSubmit = async () => {
     if (doctorName && slots.length > 0) {
       await addDoctor({ doctorName, slots });
-      setDoctorName('');
-      setSlots([]);
+      setDoctorName(''); // Clear input after submission
+      setSlots([]); // Clear slots after submission
     } else {
       alert("Please add a doctor's name and at least one slot.");
     }
@@ -59,12 +63,18 @@ function DoctorForm() {
         className="mb-2 p-2 border border-gray-300 rounded-md"
       />
 
-      {/* Slot Date Input */}
+      {/* Slot Date and Time Input */}
       <div className="flex gap-2">
         <input
           type="date"
-          value={slot}
-          onChange={(e) => setSlot(e.target.value)}
+          value={slotDate}
+          onChange={(e) => setSlotDate(e.target.value)}
+          className="mb-2 p-2 border border-gray-300 rounded-md"
+        />
+        <input
+          type="time"
+          value={slotTime}
+          onChange={(e) => setSlotTime(e.target.value)}
           className="mb-2 p-2 border border-gray-300 rounded-md"
         />
         <button
@@ -82,7 +92,9 @@ function DoctorForm() {
             <h3 className="font-bold">Added Slots:</h3>
             <ul>
               {slots.map((slot, index) => (
-                <li key={index}>{slot}</li>
+                <li key={index}>
+                  Date: {slot.date}, Time: {slot.time}
+                </li>
               ))}
             </ul>
           </div>
@@ -101,4 +113,3 @@ function DoctorForm() {
 }
 
 export default DoctorForm;
-

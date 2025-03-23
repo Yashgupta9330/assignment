@@ -26,8 +26,8 @@ const addSlot = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 data: { name: validatedData.doctorName },
             });
         }
-        const slotData = validatedData.slots.map((slotDate) => ({
-            date: new Date(slotDate),
+        const slotData = validatedData.slots.map((slot) => ({
+            date: new Date(`${slot.date}T${slot.time}:00`),
             doctorId: doctor.id,
         }));
         yield db_1.default.slot.createMany({ data: slotData });
@@ -55,7 +55,8 @@ const getSlot = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             doctorName: doctor.name,
             slots: doctor.slots.map((slot) => ({
                 id: slot.id,
-                date: slot.date.toISOString().split('T')[0],
+                date: slot.date.toISOString().split('T')[0], // Extract date
+                time: slot.date.toISOString().split('T')[1].slice(0, 5), // Extract time (HH:MM)
             })),
         }));
         res.status(200).json(result);
